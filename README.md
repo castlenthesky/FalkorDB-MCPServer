@@ -1,3 +1,5 @@
+[![MCP Toplist](https://mcptoplist.com/badge/glama%2FFalkorDB%2FFalkorDB-MCPServer.svg)](https://mcptoplist.com/server/glama%2FFalkorDB%2FFalkorDB-MCPServer)
+
 [![Tests](https://img.shields.io/github/actions/workflow/status/falkordb/FalkorDB-MCPServer/node.yml?branch=main)](https://github.com/falkordb/FalkorDB-MCPServer/actions/workflows/node.yml)
 [![codecov](https://codecov.io/gh/falkordb/FalkorDB-MCPServer/graph/badge.svg?token=pqGhrlbC1F)](https://codecov.io/gh/falkordb/FalkorDB-MCPServer)
 [![License](https://img.shields.io/github/license/falkordb/FalkorDB-MCPServer.svg)](https://github.com/falkordb/FalkorDB-MCPServer/blob/main/LICENSE)
