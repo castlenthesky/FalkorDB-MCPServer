@@ -7,7 +7,7 @@ dotenv.config({
 
 export const config = {
   server: {
-    port: parseInt(process.env.PORT || process.env.MCP_PORT || '3000'),
+    port: parseInt(process.env.PORT || process.env.MCP_PORT || '8080'),
     nodeEnv: process.env.NODE_ENV || 'development',
   },
   falkorDB: {
