@@ -62,7 +62,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        if [ "$$MCP_TRANSPORT" = "http" ] && [ "$$MCP_BIND_ADDRESS" != "127.0.0.1" ] && [ -z "$$MCP_API_KEY" ]; then
+        if [ "$$MCP_TRANSPORT" = "http" ] && [ "$$MCP_BIND_ADDRESS" != "127.0.0.1" ] && [ "$$MCP_BIND_ADDRESS" != "::1" ] && [ -z "$$MCP_API_KEY" ]; then
           echo "MCP_BIND_ADDRESS=$$MCP_BIND_ADDRESS exposes the MCP server beyond localhost, but MCP_API_KEY is unset. Refusing to start an unauthenticated HTTP endpoint on the network. Set MCP_API_KEY in .env, or leave MCP_BIND_ADDRESS at 127.0.0.1." >&2
           exit 1
         fi
