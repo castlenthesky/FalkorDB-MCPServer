@@ -28,7 +28,7 @@ export interface MCPServerConfig {
     defaultServer: "falkordb",
     servers: {
       "falkordb": {
-        url: "http://localhost:8080/api/mcp",
+        url: "http://localhost:8080",
         apiKey: "your_api_key_here"
       }
     }

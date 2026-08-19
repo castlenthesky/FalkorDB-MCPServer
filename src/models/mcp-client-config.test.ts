@@ -70,7 +70,7 @@ describe('MCP Client Configuration Models', () => {
         expect(sampleMCPClientConfig.defaultServer).toBe('falkordb');
         expect(sampleMCPClientConfig.servers).toBeDefined();
         expect(sampleMCPClientConfig.servers.falkordb).toBeDefined();
-        expect(sampleMCPClientConfig.servers.falkordb.url).toBe('http://localhost:8080/api/mcp');
+        expect(sampleMCPClientConfig.servers.falkordb.url).toBe('http://localhost:8080');
         expect(sampleMCPClientConfig.servers.falkordb.apiKey).toBe('your_api_key_here');
       });
 
