@@ -52,21 +52,10 @@ services:
     # Bound to 127.0.0.1 by default: in HTTP mode the server only enforces Bearer
     # auth when MCP_API_KEY is set, so a wildcard bind would expose an
     # unauthenticated endpoint. Set MCP_BIND_ADDRESS=0.0.0.0 in .env (and set
-    # MCP_API_KEY) to reach it from other hosts — the entrypoint below refuses
-    # to start otherwise.
+    # MCP_API_KEY) to reach it from other hosts — the server itself refuses to
+    # start otherwise (see enforceLocalBindWithoutApiKey() in src/index.ts).
     ports:
       - "${MCP_BIND_ADDRESS:-127.0.0.1}:${MCP_PORT:-8080}:8080"
-    # Refuse to start if MCP_BIND_ADDRESS opts into a non-local bind without
-    # MCP_API_KEY set — that combination is an unauthenticated HTTP endpoint
-    # exposed beyond localhost. Local-only binding (the default) is unaffected.
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        if [ "$$MCP_TRANSPORT" = "http" ] && [ "$$MCP_BIND_ADDRESS" != "127.0.0.1" ] && [ "$$MCP_BIND_ADDRESS" != "::1" ] && [ -z "$$MCP_API_KEY" ]; then
-          echo "MCP_BIND_ADDRESS=$$MCP_BIND_ADDRESS exposes the MCP server beyond localhost, but MCP_API_KEY is unset. Refusing to start an unauthenticated HTTP endpoint on the network. Set MCP_API_KEY in .env, or leave MCP_BIND_ADDRESS at 127.0.0.1." >&2
-          exit 1
-        fi
-        exec node dist/index.js
     environment:
       - NODE_ENV=production
       - MCP_TRANSPORT=${MCP_TRANSPORT:-http}

@@ -103,6 +103,7 @@ Environment variables (copy `.env.example` to `.env`):
 | `FALKORDB_USERNAME` | — | Optional authentication |
 | `FALKORDB_PASSWORD` | — | Optional authentication |
 | `FALKORDB_DEFAULT_READONLY` | `false` | Set to 'true' for read-only mode (useful for replicas) |
+| `MCP_BIND_ADDRESS` | `127.0.0.1` | Interface the MCP server is published on (Docker Compose: also the published port's bind address). Non-loopback values require `MCP_API_KEY` to be set, or the server refuses to start in HTTP mode |
 
 ## MCP Client Integration
 
