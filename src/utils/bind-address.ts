@@ -2,6 +2,8 @@
  * Utility to classify a Docker bind-address value as local (loopback) or not.
  */
 
+import { isIPv4 } from 'net';
+
 /**
  * Determine whether a bind-address value (as set via MCP_BIND_ADDRESS) refers
  * to a loopback interface — i.e. one that is not reachable from outside the
@@ -42,10 +44,11 @@ export function isLocalBindAddress(value: string | undefined): boolean {
   const ipv4MappedMatch = unbracketed.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i);
   const ipv4Candidate = ipv4MappedMatch ? ipv4MappedMatch[1] : unbracketed;
 
-  const ipv4Match = ipv4Candidate.match(/^(\d{1,3})\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
-  if (ipv4Match) {
-    const firstOctet = parseInt(ipv4Match[1], 10);
-    return firstOctet === 127;
+  // isIPv4() validates every octet (0-255, no leading zeros), unlike a shape-only
+  // regex — so garbage like `127.999.999.999` or octal-looking `127.00.0.1` is
+  // correctly rejected rather than classified as loopback.
+  if (isIPv4(ipv4Candidate)) {
+    return ipv4Candidate.startsWith('127.');
   }
 
   return false;

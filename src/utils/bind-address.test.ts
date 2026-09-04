@@ -30,6 +30,11 @@ describe('Bind Address Utility', () => {
         'localhost', // hostname (Compose itself rejects this)
         'not-an-ip', // garbage input
         '128.0.0.1', // address that merely starts with a similar prefix
+        '127.999.999.999', // out-of-range octets shaped like an IPv4 address
+        '127.0.0.256', // out-of-range last octet
+        '127.00.0.1', // leading zero (historically parsed as octal)
+        '::ffff:999.0.0.1', // IPv4-mapped form with an invalid embedded octet
+        '127.0.0.1.5', // too many octets
       ];
 
       it.each(nonLocalValues)('treats %s as non-local', (value) => {
