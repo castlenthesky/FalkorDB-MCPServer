@@ -53,7 +53,7 @@ services:
     # auth when MCP_API_KEY is set, so a wildcard bind would expose an
     # unauthenticated endpoint. Set MCP_BIND_ADDRESS=0.0.0.0 in .env (and set
     # MCP_API_KEY) to reach it from other hosts — the server itself refuses to
-    # start otherwise (see enforceLocalBindWithoutApiKey() in src/index.ts).
+    # start otherwise (see enforceLocalBindWithoutApiKey() in src/utils/startup-guard.ts).
     ports:
       - "${MCP_BIND_ADDRESS:-127.0.0.1}:${MCP_PORT:-8080}:8080"
     environment:

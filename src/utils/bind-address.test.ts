@@ -1,4 +1,4 @@
-import { isLocalBindAddress } from './bind-address';
+import { isLocalBindAddress, isUnauthenticatedNetworkExposure } from './bind-address';
 
 describe('Bind Address Utility', () => {
   describe('isLocalBindAddress', () => {
@@ -35,6 +35,38 @@ describe('Bind Address Utility', () => {
       it.each(nonLocalValues)('treats %s as non-local', (value) => {
         expect(isLocalBindAddress(value)).toBe(false);
       });
+    });
+  });
+
+  describe('isUnauthenticatedNetworkExposure', () => {
+    it('is true for a non-local HTTP bind with no API key', () => {
+      expect(
+        isUnauthenticatedNetworkExposure({ transport: 'http', bindAddress: '0.0.0.0', apiKey: '' })
+      ).toBe(true);
+    });
+
+    it('is false for a non-local HTTP bind with an API key set', () => {
+      expect(
+        isUnauthenticatedNetworkExposure({ transport: 'http', bindAddress: '0.0.0.0', apiKey: 'secret' })
+      ).toBe(false);
+    });
+
+    it('is false for a local HTTP bind with no API key', () => {
+      expect(
+        isUnauthenticatedNetworkExposure({ transport: 'http', bindAddress: '127.0.0.1', apiKey: '' })
+      ).toBe(false);
+    });
+
+    it('is false for a non-local bind with no API key when transport is stdio', () => {
+      expect(
+        isUnauthenticatedNetworkExposure({ transport: 'stdio', bindAddress: '0.0.0.0', apiKey: '' })
+      ).toBe(false);
+    });
+
+    it('is false when bindAddress is unset (defaults to local)', () => {
+      expect(
+        isUnauthenticatedNetworkExposure({ transport: 'http', bindAddress: undefined, apiKey: '' })
+      ).toBe(false);
     });
   });
 });

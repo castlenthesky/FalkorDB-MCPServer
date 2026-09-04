@@ -50,3 +50,27 @@ export function isLocalBindAddress(value: string | undefined): boolean {
 
   return false;
 }
+
+interface McpHttpAuthConfig {
+  transport: string;
+  bindAddress: string | undefined;
+  apiKey: string | undefined;
+}
+
+/**
+ * Determine whether MCP's HTTP transport would be published on a non-local
+ * address with no API key protecting it — an unauthenticated endpoint
+ * exposed to the network. Used to decide whether server startup should be
+ * refused; kept separate from that side effect so the decision itself is
+ * unit-testable.
+ *
+ * @param mcpConfig The relevant slice of `config.mcp`.
+ * @returns true if the server would be exposed with no auth.
+ */
+export function isUnauthenticatedNetworkExposure(mcpConfig: McpHttpAuthConfig): boolean {
+  return (
+    mcpConfig.transport === 'http' &&
+    !isLocalBindAddress(mcpConfig.bindAddress) &&
+    !mcpConfig.apiKey
+  );
+}
