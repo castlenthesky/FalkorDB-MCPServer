@@ -94,10 +94,10 @@ docker compose up -d
 
 This starts FalkorDB with health checks and persistent volumes, plus the MCP server pre-configured to connect to it.
 
-The MCP server runs in **HTTP transport** mode and is exposed on `localhost:3000` by default. To connect a client, configure it to use:
+The MCP server runs in **HTTP transport** mode and is exposed on `localhost:8080` by default. To connect a client, configure it to use:
 
 - **Transport:** `http`
-- **URL:** `http://localhost:3000`
+- **URL:** `http://localhost:8080`
 - **API Key:** Set via the `MCP_API_KEY` environment variable — optional for the default localhost-only setup, required if you set `MCP_BIND_ADDRESS` to a non-local address (see below)
 
 Both the MCP server's and the web UI's published ports are bound to `127.0.0.1` by default — reachable only from the machine running Docker Compose. To reach either from another machine (e.g. over a LAN), set `MCP_BIND_ADDRESS` / `FALKORDB_WEB_BIND_ADDRESS` to `0.0.0.0` in `.env`. The MCP server refuses to start with a non-local `MCP_BIND_ADDRESS` unless `MCP_API_KEY` is also set, since that combination would otherwise be an unauthenticated endpoint exposed to the network; the web UI has no auth of its own, so exposing it is a manual, unguarded opt-in.
@@ -286,7 +286,7 @@ Exposes the MCP server over HTTP for remote or networked access. Supports multip
 
 ```env
 MCP_TRANSPORT=http
-MCP_PORT=3000
+MCP_PORT=8080
 MCP_API_KEY=your-secret-api-key  # Optional but recommended
 ```
 
@@ -296,12 +296,12 @@ When using HTTP transport, clients connect by sending a POST request with an `in
 
 1. Start the server:
    ```bash
-   MCP_TRANSPORT=http MCP_PORT=3000 npm start
+   MCP_TRANSPORT=http MCP_PORT=8080 npm start
    ```
 
 2. Use the MCP Inspector to connect:
    ```bash
-   npx @modelcontextprotocol/inspector --transport streamable-http --url http://localhost:3000
+   npx @modelcontextprotocol/inspector --transport streamable-http --url http://localhost:8080
    ```
 
 > **Note:** `npm run inspect` uses stdio transport. For HTTP, start the server and inspector separately as shown above.
@@ -328,7 +328,7 @@ Requests without a valid key receive a `401 Unauthorized` response. Auth is only
 ```bash
 # Use the latest stable release
 docker pull falkordb/mcpserver:latest
-docker run -p 3000:3000 \
+docker run -p 8080:8080 \
   -e FALKORDB_HOST=host.docker.internal \
   -e FALKORDB_PORT=6379 \
   -e MCP_API_KEY=your-secret-key \
@@ -345,7 +345,7 @@ docker pull falkordb/mcpserver:1.0.0
 
 ```bash
 docker build -t falkordb-mcpserver .
-docker run -p 3000:3000 \
+docker run -p 8080:8080 \
   -e FALKORDB_HOST=host.docker.internal \
   -e FALKORDB_PORT=6379 \
   -e MCP_API_KEY=your-secret-key \
@@ -364,12 +364,12 @@ services:
   mcp-server:
     image: falkordb/mcpserver:latest  # or use 'build: .' to build locally
     ports:
-      - "3000:3000"
+      - "8080:8080"
     environment:
       - FALKORDB_HOST=falkordb
       - FALKORDB_PORT=6379
       - MCP_TRANSPORT=http
-      - MCP_PORT=3000
+      - MCP_PORT=8080
       - MCP_API_KEY=your-secret-key
     depends_on:
       - falkordb
