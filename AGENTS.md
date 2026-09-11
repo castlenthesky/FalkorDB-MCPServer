@@ -58,7 +58,9 @@ src/
 │   ├── mcp.types.ts            # MCP protocol interfaces
 │   └── mcp-client-config.ts    # Configuration models
 └── utils/
-    └── connection-parser.ts    # Utility functions
+    ├── connection-parser.ts    # Utility functions
+    ├── bind-address.ts         # Loopback classification for MCP_BIND_ADDRESS
+    └── startup-guard.ts        # Refuses unauthenticated non-loopback HTTP startup
 ```
 
 ## Architecture Patterns
@@ -84,8 +86,8 @@ Schema-discovery tools (`get_graph_schema`, `get_node_schema`, `get_relationship
 - **FalkorDB Service** (`src/services/falkordb.service.ts`): manages connections, retries, and pooling; exposes `executeQuery()`, `executeReadOnlyQuery()`, `listGraphs()`, `deleteGraph()`
 
 ### Transports
-- **stdio** (default): console methods are redirected to stderr to prevent MCP protocol corruption on stdout. Build output in `dist/` is executed directly by MCP clients.
-- **HTTP** (`MCP_TRANSPORT=http`, `src/index.ts`'s `startHTTPServer()`): Streamable HTTP via `StreamableHTTPServerTransport`, one `McpServer` instance per session. Requests are Bearer-authenticated against `MCP_API_KEY` when it's set — unset, auth is disabled. Before listening, `enforceLocalBindWithoutApiKey()` (`src/utils/startup-guard.ts`) refuses to start if `MCP_BIND_ADDRESS` declares a non-loopback publish address with no `MCP_API_KEY` set (Docker Compose only — see the `MCP_BIND_ADDRESS` row below).
+- **stdio** (default): Build output in `dist/` is executed directly by MCP clients.
+- **HTTP** (`MCP_TRANSPORT=http`, `src/index.ts`'s `startHTTPServer()`): Streamable HTTP via `StreamableHTTPServerTransport`, one `McpServer` instance per session. Requests are Bearer-authenticated against `MCP_API_KEY` when it's set — unset, auth is disabled. Before listening, `enforceLocalBindWithoutApiKey()` (`src/utils/startup-guard.ts`) refuses to start whenever `MCP_BIND_ADDRESS` declares a non-loopback address with no `MCP_API_KEY` set — this runs unconditionally in every HTTP deployment, not only under Docker Compose (see the `MCP_BIND_ADDRESS` row below for what the variable actually controls).
 
 ### Error Handling
 - MCP tool handlers use `errorHandler.toMcpErrorResult()` to sanitize errors before returning to clients (never throw from a tool handler)
@@ -105,7 +107,7 @@ Environment variables (copy `.env.example` to `.env`):
 | `FALKORDB_DEFAULT_READONLY` | `false` | Set to 'true' for read-only mode (useful for replicas) |
 | `MCP_TRANSPORT` | `stdio` | `stdio` or `http` — selects which transport `src/index.ts` starts |
 | `MCP_API_KEY` | — | Bearer token required on HTTP requests when set; HTTP auth is disabled when unset. Ignored in stdio mode |
-| `MCP_BIND_ADDRESS` | `127.0.0.1` | Interface the MCP server is published on (Docker Compose: also the published port's bind address). Non-loopback values require `MCP_API_KEY` to be set, or the server refuses to start in HTTP mode |
+| `MCP_BIND_ADDRESS` | `127.0.0.1` | Docker Compose only: host interface the MCP server's published port binds to. Does not change what the server listens on inside the container (always every interface) and has no effect outside Compose. Non-loopback values require `MCP_API_KEY` to be set, or the server refuses to start in HTTP mode |
 | `FALKORDB_WEB_BIND_ADDRESS` | `127.0.0.1` | Docker Compose only: interface the bundled FalkorDB web UI's published port binds to. The web UI has no auth of its own, so this is a manual, unguarded opt-in with no equivalent startup check |
 
 ## MCP Client Integration

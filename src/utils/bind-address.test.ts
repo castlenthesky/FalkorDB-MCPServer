@@ -1,4 +1,4 @@
-import { isLocalBindAddress, isUnauthenticatedNetworkExposure } from './bind-address';
+import { isLocalBindAddress, isUnauthenticatedNetworkExposure } from './bind-address.js';
 
 describe('Bind Address Utility', () => {
   describe('isLocalBindAddress', () => {

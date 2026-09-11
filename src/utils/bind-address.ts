@@ -74,6 +74,6 @@ export function isUnauthenticatedNetworkExposure(mcpConfig: McpHttpAuthConfig): 
   return (
     mcpConfig.transport === 'http' &&
     !isLocalBindAddress(mcpConfig.bindAddress) &&
-    !mcpConfig.apiKey
+    !(mcpConfig.apiKey ?? '').trim()
   );
 }

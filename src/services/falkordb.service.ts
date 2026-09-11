@@ -93,7 +93,7 @@ class FalkorDBService {
         } else {
           const appError = new AppError(
             CommonErrors.CONNECTION_FAILED,
-            `Failed to connect to FalkorDB after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : String(error)}`,
+            `Failed to connect to FalkorDB after ${this.maxRetries + 1} attempts: ${error instanceof Error ? error.message : String(error)}`,
             true
           );
 
